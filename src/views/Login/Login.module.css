@@ -1,0 +1,107 @@
+/* src/views/Login/Login.module.css */
+
+/* Contenedor principal para centrar todo */
+.pageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Ocupa toda la altura de la pantalla */
+    background-color: #f8f9fa; /* Un fondo gris muy claro */
+    padding: 20px; /* Espacio en bordes para pantallas pequeñas */
+  }
+  
+  /* La caja que contiene el formulario */
+  .loginContainer {
+    background-color: #ffffff; /* Fondo blanco para el contenedor */
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    text-align: center;
+    width: 100%;
+    max-width: 400px; /* Ancho máximo para el formulario */
+  }
+
+  .logo {
+    max-width: 150px; /* Ajusta el tamaño máximo como necesites */
+    height: auto; /* Mantiene la proporción */
+    margin-bottom: -50px;
+  }
+  
+  /* Título principal "AquaNest" */
+  .title {
+    color: #0056b3; /* Un azul oscuro, ajústalo si tienes un color específico */
+    font-size: 2.5rem; /* Tamaño grande */
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  /* Subtítulo "Bienvenido!" */
+  .subtitle {
+    color: #6c757d; /* Gris */
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+  }
+  
+  /* Estilo para agrupar label e input */
+  .formGroup {
+    margin-bottom: 20px;
+    text-align: left; /* Alinea labels a la izquierda */
+  }
+  
+  .label {
+    display: block; /* Hace que el label ocupe su propia línea */
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #495057; /* Gris oscuro */
+  }
+  
+  .input {
+    width: 100%; /* Ocupa todo el ancho del contenedor */
+    padding: 12px 15px;
+    border: 1px solid #ced4da; /* Borde gris claro */
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box; /* Asegura que padding no aumente el tamaño total */
+  }
+  
+  .input:focus {
+    border-color: #80bdff; /* Borde azul al enfocar */
+    outline: none; /* Quita el borde por defecto del navegador */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Sombra suave azul */
+  }
+  
+  /* Botón de Iniciar Sesión */
+  .loginButton {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: #007bff; /* Azul primario */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease; /* Transición suave */
+    margin-top: 10px; /* Espacio sobre el botón */
+  }
+  
+  .loginButton:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el mouse */
+  }
+  
+  /* Enlace de Registro */
+  .registerLink {
+    margin-top: 25px;
+    font-size: 0.9rem;
+    color: #6c757d; /* Gris */
+  }
+  
+  .registerLink a {
+    color: #007bff; /* Azul para el enlace */
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .registerLink a:hover {
+    text-decoration: underline;
+  }

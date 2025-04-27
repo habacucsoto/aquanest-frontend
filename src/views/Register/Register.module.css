@@ -1,0 +1,126 @@
+/* src/views/Register/Register.module.css */
+
+/* --- Estilos Comunes (Copiados/Adaptados de Login.module.css) --- */
+
+.pageContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 20px;
+  }
+  
+  .registerContainer { /* Cambiamos nombre para especificidad si quieres, o mantenemos uno genérico */
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 450px; /* Un poco más ancho quizás por la lista */
+  }
+  
+  .logo {
+    max-width: 150px;
+    height: auto;
+    margin-bottom: -40px; /* Ajusta espacio */
+  }
+  
+  .title { /* Título "Crea tu cuenta!" */
+    color: #343a40; /* Un negro suave */
+    font-size: 1.8rem; /* Tamaño */
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  
+  .loginLink { /* "O inicia sesión..." */
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+  
+  .loginLink a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .loginLink a:hover {
+    text-decoration: underline;
+  }
+  
+  .formGroup {
+    margin-bottom: 15px; /* Menos espacio entre grupos que en Login */
+    text-align: left;
+  }
+  
+  .label {
+    display: block;
+    margin-bottom: 6px; /* Menos espacio */
+    font-weight: bold;
+    color: #495057;
+  }
+  
+  .input {
+    width: 100%;
+    padding: 10px 12px; /* Ligeramente menos padding */
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .input:focus {
+    border-color: #80bdff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  
+  .registerButton { /* Botón "Crear Cuenta" */
+    width: 100%;
+    padding: 12px 15px;
+    background-color: #28a745; /* Verde para Crear Cuenta */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 20px; /* Espacio sobre el botón */
+  }
+  
+  .registerButton:hover {
+    background-color: #218838; /* Verde más oscuro */
+  }
+  
+  .passwordRequirements {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 5px;
+    font-size: 0.85rem;
+    text-align: left;
+  }
+  
+  .passwordRequirements li {
+    margin-bottom: 4px;
+    transition: color 0.3s ease; /* Transición suave del color */
+  }
+  
+  /* Estilo para requisito CUMPLIDO */
+  .valid {
+    color: #28a745; /* Verde */
+  }
+  
+  /* Estilo para requisito NO CUMPLIDO */
+  .invalid {
+    color: #e61616; /* Gris (o el color que prefieras para 'pendiente') */
+  }
+
+  .icon {
+    display: inline-block; /* Asegura que el margen funcione correctamente */
+    margin-right: 8px; /* Espacio entre el icono y el texto */
+    width: 15px; /* Ancho fijo para alinear iconos (ajusta si es necesario) */
+    text-align: center; /* Centra el icono dentro del span */
+  }
