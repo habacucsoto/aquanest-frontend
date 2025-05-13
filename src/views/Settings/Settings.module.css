@@ -1,0 +1,254 @@
+/* src/views/Settings/Settings.module.css */
+.settingsContainer {
+    padding: 20px;
+    margin: 20px auto; /* Centrar con margen */
+}
+
+.settingsContainer h1 {
+    margin-bottom: 30px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-left: 40px;
+    margin-top: -35px;
+}
+
+.settingsContent {
+    display: flex;
+    gap: 30px; /* Espacio entre navegación y panel */
+}
+
+.settingsNav {
+    display: flex;
+    flex-direction: column; /* Navegación vertical */
+    gap: 10px;
+    min-width: 180px; /* Ancho mínimo de la navegación */
+    border-right: 1px solid #eee; /* Separador */
+    padding-right: 30px;
+}
+
+.navLink {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.navLink:hover {
+    background-color: #f0f0f0;
+}
+
+.activeLink { /* Estilo para el enlace activo */
+    background-color: #e7f3ff; /* Un azul claro */
+    color: #0056b3;
+    font-weight: bold;
+}
+
+.settingsPanel {
+    flex-grow: 1; /* Ocupa el resto del espacio */
+}
+
+.panelDescription {
+    color: #6c757d;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+}
+
+/* Estilos para formularios dentro del panel */
+.formRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.formLabel {
+    font-weight: bold;
+    color: #495057;
+    flex-basis: 200px; /* Espacio fijo para labels */
+}
+
+.formValue {
+    color: #333;
+    flex-grow: 1; /* Ocupa espacio restante */
+    margin: 0 15px;
+}
+
+.updateButton,
+.submitButton,
+.cancelButton {
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    border: 1px solid transparent;
+}
+
+.updateButton {
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    color: #0056b3;
+}
+.updateButton:hover{
+    background-color: #d1dce8;
+}
+
+.submitButton {
+    background-color: #007bff; /* Azul */
+    color: white;
+}
+.submitButton:hover {
+     background-color: #0056b3;
+}
+.submitButton:disabled {
+    background-color: #a0cfff;
+    cursor: not-allowed;
+}
+
+
+.cancelButton {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #dc3545; /* Rojo */
+    margin-right: 10px;
+}
+.cancelButton:hover {
+     background-color: #e2e6ea;
+}
+
+
+/* Estilos para forms verticales (como el de contraseña) */
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.label { /* Reutiliza si es igual a .formLabel */
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #495057;
+}
+
+.input { /* Reutiliza de otros módulos si tienes un estilo global */
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.buttonGroup {
+    display: flex;
+    justify-content: flex-end; /* Alinea botones a la derecha */
+    margin-top: 25px;
+}
+
+.passwordRequirementsPlaceholder {
+    margin: 10px 0 20px 0;
+    font-size: 0.9em;
+    color: #6c757d;
+}
+
+/* Logout button specific style */
+.logoutButton {
+    margin-top: 20px; /* Espacio arriba */
+    padding: 10px 15px;
+    width: 100%; /* Ocupa ancho de nav */
+    background-color: #ffebee; /* Fondo rojo claro */
+    border: 1px solid #dc3545;
+    color: #dc3545; /* Texto rojo */
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    text-align: center;
+}
+
+.logoutButton:hover {
+    background-color: #ffcdd2; /* Rojo más claro al pasar */
+}
+
+/* Nuevos estilos para la edición del nombre en Account.jsx */
+.inputField {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin-right: 700px;
+  margin-bottom: 10px;
+}
+
+.editActions {
+  display: flex;
+  gap: 10px;
+}
+
+.saveButton {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.saveButton:hover {
+  opacity: 0.8;
+}
+
+.cancelButton {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.cancelButton:hover {
+  opacity: 0.8;
+}
+
+.passwordRequirements {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 5px;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.passwordRequirements li {
+  margin-bottom: 4px;
+  transition: color 0.3s ease; /* Transición suave del color */
+}
+
+/* Estilo para requisito CUMPLIDO */
+.valid {
+  color: #28a745; /* Verde */
+}
+
+/* Estilo para requisito NO CUMPLIDO */
+.invalid {
+  color: #e61616; /* Rojo */
+}
+
+.icon {
+  display: inline-block; /* Asegura que el margen funcione correctamente */
+  margin-right: 8px; /* Espacio entre el icono y el texto */
+  width: 15px; /* Ancho fijo para alinear iconos (ajusta si es necesario) */
+  text-align: center; /* Centra el icono dentro del span */
+}
+
+.errorMessage {
+  color: #dc3545; /* Rojo */
+  margin-top: 10px;
+}
+
+.successMessage {
+  color: #28a745; /* Verde */
+  margin-top: 10px;
+}
