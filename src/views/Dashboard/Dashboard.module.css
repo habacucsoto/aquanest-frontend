@@ -1,0 +1,146 @@
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .pageContainer {
+    padding: 20px;
+    padding-top: 0; /* Elimina el padding superior del contenedor de la página */
+}
+
+.dashboardTitle {
+    font-size: 1.8rem;
+    color: #333;
+    margin: 0;
+    margin-left: 40px;
+    margin-top: 4px;
+}
+
+.gridContainer {
+    display: grid;
+    grid-template-columns: 0.4fr 1.6fr;
+    grid-template-rows: auto auto;
+    gap: 10px;
+}
+
+.chartContainer {
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    height: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.controlContainer,
+.controlLinkContainer {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #faf5f5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.controlContainer {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.controlContainer:hover {
+    background-color: #e9ecef;
+}
+
+.controlIcon {
+    width: 150px; /* Ajusta el tamaño del icono */
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.chartTitle {
+    margin-top: 15px;
+    color: #555;
+    font-size: 1em;
+}
+
+.controlLinkContainer {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #0056b3;
+}
+
+.controlLinkContainer:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tableContainer {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-top: 25px;
+}
+
+.tableTitle {
+    font-size: 1.4rem;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.alertsTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.alertsTable th,
+.alertsTable td {
+    border: 1px solid #dee2e6;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.alertsTable th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.statusResuelta {
+    color: green;
+    font-weight: bold;
+}
+
+.statusPendiente {
+    color: orange;
+    font-weight: bold;
+}
+
+.loadingText,
+.errorText {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #6c757d;
+}
+
+.errorText {
+    color: red;
+}
