@@ -1,4 +1,3 @@
-// src/views/Species/Species.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styles from './Species.module.css';
@@ -6,30 +5,25 @@ import Layout from '../../views/Layout/Layout';
 import fishIcon from '../../assets/pez.jpeg';
 
 
-const API_URL = 'http://localhost:8080'; // Ajusta si es diferente
+const API_URL = 'http://localhost:8080';
 
-// Helper para obtener el token
 const getAuthToken = () => localStorage.getItem('authToken');
 
 function Species() {
-  // Estados del formulario para crear una nueva especie
   const [nombre, setNombre] = useState('');
   const [temperaturaOptimaMin, setTemperaturaOptimaMin] = useState('');
   const [temperaturaOptimaMax, setTemperaturaOptimaMax] = useState('');
   const [nitratoOptimoMin, setNitratoOptimoMin] = useState('');
   const [nitratoOptimoMax, setNitratoOptimoMax] = useState('');
 
-  // Estados para la lista de especies
   const [speciesList, setSpeciesList] = useState([]);
   const [listLoading, setListLoading] = useState(false);
   const [listError, setListError] = useState('');
 
-  // Estados para el formulario de creación
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState('');
   const [formSuccess, setFormSuccess] = useState('');
 
-  // --- Función para obtener la lista de ESPECIES ---
   const fetchSpecies = async () => {
     setListLoading(true);
     setListError('');
@@ -53,12 +47,10 @@ function Species() {
     }
   };
 
-  // --- Cargar la lista de especies al montar el componente ---
   useEffect(() => {
     fetchSpecies();
   }, []);
 
-  // --- Función para crear una nueva especie ---
   const handleCreateSpecies = async (event) => {
     event.preventDefault();
     setFormLoading(true);
@@ -79,22 +71,17 @@ function Species() {
       nitrateOptimoMax: parseFloat(nitratoOptimoMax),
     };
 
-    console.log('Enviando para crear especie:', newSpeciesData);
-
     try {
       const response = await axios.post(`${API_URL}/especies`, newSpeciesData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      console.log('Especie creada:', response.data);
       setFormSuccess(`Especie "${response.data.nombre}" creada con éxito.`);
-      // Limpiar formulario
       setNombre('');
       setTemperaturaOptimaMin('');
       setTemperaturaOptimaMax('');
       setNitratoOptimoMin('');
       setNitratoOptimoMax('');
-      // Actualizar la lista de especies
       await fetchSpecies();
 
     } catch (err) {
@@ -116,7 +103,6 @@ function Species() {
       </div>
 
       <div className={styles.contentWrapper}>
-        {/* Sección: Formulario para crear nueva especie */}
         <div className={styles.formContainer}>
           <h2 className={styles.sectionTitle}>Nueva especie</h2>
           {formError && <p className={styles.errorMessage}>{formError}</p>}
@@ -187,8 +173,6 @@ function Species() {
             </button>
           </form>
         </div>
-
-        {/* Sección: Lista de Especies */}
         <div className={styles.listContainer}>
           <h2 className={styles.sectionTitle}>Especies Creadas</h2>
           {listLoading && <p>Cargando especies...</p>}
@@ -205,7 +189,7 @@ function Species() {
                         alt="Icono de pez"
                         className={styles.fishIcon}
                       />
-                      <div className={styles.speciesInfo}> {/* Contenedor para la información de la especie */}
+                      <div className={styles.speciesInfo}>
                         <h3 className={styles.speciesCardTitle}>{specie.nombre}</h3>
                         <p className={styles.speciesCardDetail}>Temperatura óptima: {specie.temperaturaOptimaMin}°C - {specie.temperaturaOptimaMax}°C</p>
                         <p className={styles.speciesCardDetail}>Nitrato óptimo: {specie.nitrateOptimoMin} ppm - {specie.nitrateOptimoMax} ppm</p>

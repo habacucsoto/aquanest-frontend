@@ -1,4 +1,3 @@
-// src/components/Charts/NitrateChart.jsx
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -10,7 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler // <--- ¡Importa el plugin Filler!
+  Filler
 } from 'chart.js';
 
 ChartJS.register(
@@ -21,22 +20,20 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler // <--- ¡Regístralo aquí también!
+  Filler
 );
 
-// Opciones de la gráfica
 const options = {
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
     legend: { display: false },
-    title: { display: true, text: 'Nitrato Amoniacal (ppm)' }, // Título más específico
+    title: { display: true, text: 'Nitrato Amoniacal (ppm)' },
   },
-  scales: { y: { beginAtZero: true } }, // El nitrato quizás sí empiece en 0
+  scales: { y: { beginAtZero: true } },
     animation: false
 };
 
-// El componente ahora recibe 'chartData' como prop
 function NitrateChart({ chartData }) {
     if (!chartData || !chartData.datasets || chartData.datasets[0].data.length === 0) {
          return <p>Cargando datos de nitrato...</p>;

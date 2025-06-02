@@ -1,4 +1,3 @@
-// src/components/Charts/TemperatureChart.jsx
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -10,7 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler // <--- ¡Importación correcta!
+  Filler 
 } from 'chart.js';
 
 ChartJS.register(
@@ -21,25 +20,23 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  Filler // <--- ¡DEBES REGISTRARLO AQUÍ TAMBIÉN!
+  Filler
 );
 
 
 // Opciones de la gráfica (pueden ser fijas o pasarse también como prop)
 const options = {
   responsive: true,
-  maintainAspectRatio: false, // Permite controlar el tamaño con CSS del contenedor
+  maintainAspectRatio: false,
   plugins: {
     legend: { display: false },
-    title: { display: true, text: 'Temperatura (°C)' }, // Título más específico
+    title: { display: true, text: 'Temperatura (°C)' },
   },
   scales: { y: { beginAtZero: false } },
-   animation: false // Deshabilita animación para actualizaciones rápidas
+   animation: false
 };
 
-// El componente ahora recibe 'chartData' como prop
 function TemperatureChart({ chartData }) {
-    // Si chartData no tiene datasets o datos, puedes renderizar un estado vacío o un mensaje
     if (!chartData || !chartData.datasets || chartData.datasets[0].data.length === 0) {
         return <p>Cargando datos de temperatura...</p>;
     }

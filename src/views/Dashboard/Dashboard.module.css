@@ -9,7 +9,7 @@
 
   .pageContainer {
     padding: 20px;
-    padding-top: 0; /* Elimina el padding superior del contenedor de la página */
+    padding-top: 0;
 }
 
 .dashboardTitle {
@@ -123,13 +123,18 @@
     font-weight: bold;
 }
 
-.statusResuelta {
+.statusAlerta {
     color: green;
     font-weight: bold;
 }
 
-.statusPendiente {
-    color: orange;
+.statusError {
+    color: red;
+    font-weight: bold;
+}
+
+.statusCambioEstado {
+    color: blue;
     font-weight: bold;
 }
 
@@ -143,4 +148,27 @@
 
 .errorText {
     color: red;
+}
+
+.historyButtonContainer {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.historicalButton {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.historicalButton:hover {
+    background-color: #218838;
 }

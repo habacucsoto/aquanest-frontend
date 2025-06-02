@@ -1,5 +1,5 @@
 .pageContainer {
-  position: flex; /* Ya no necesitas flex aquí */
+  position: flex;
   font-family: sans-serif;
   min-height: 100vh;
   height: 100vh;
@@ -10,6 +10,5 @@
   height: 100%;
   padding: 20px;
   box-sizing: border-box;
-  position: relative; /* Se mantiene normal */
-  z-index: 1; /* Asegura que esté detrás de la Navbar */
+  position: relative;  z-index: 1;
 }

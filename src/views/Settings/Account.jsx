@@ -1,6 +1,5 @@
-// src/views/Settings/Account.jsx
 import React, { useState, useEffect } from 'react';
-import styles from './Settings.module.css'; // Usamos el mismo CSS module
+import styles from './Settings.module.css';
 import axios from 'axios';
 
 const API_URL = 'http://localhost:8080';
@@ -8,7 +7,7 @@ const getAuthToken = () => localStorage.getItem('authToken');
 
 function Account() {
   const [name, setName] = useState('');
-  const [email, setEmail] = useState(''); // Nuevo estado para el email
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -22,7 +21,7 @@ function Account() {
       .then(response => {
         setName(response.data.nombre);
         setNewName(response.data.nombre);
-        setEmail(response.data.email); // Obtener el email de la respuesta
+        setEmail(response.data.email);
       })
       .catch(err => setError("Error al cargar datos del perfil"))
       .finally(() => setLoading(false));
@@ -34,7 +33,7 @@ function Account() {
 
   const handleCancelClick = () => {
     setIsEditing(false);
-    setNewName(name); // Revertir al nombre original
+    setNewName(name);
   };
 
   const handleNameChange = (event) => {
@@ -43,8 +42,8 @@ function Account() {
 
   const handleSaveName = () => {
     setLoading(true);
-    axios.patch( // O axios.put si usaste PUT en el backend
-      `${API_URL}/usuarios/me/name`, // Ajusta la URL si usaste /usuarios/me con PUT
+    axios.patch(
+      `${API_URL}/usuarios/me/name`,
       { nombre: newName },
       { headers: { Authorization: `Bearer ${getAuthToken()}` } }
     )
@@ -55,7 +54,6 @@ function Account() {
       })
       .catch(err => {
         setError("Error al actualizar el nombre");
-        console.error("Error al actualizar el nombre:", err);
       })
       .finally(() => setLoading(false));
   };
@@ -91,12 +89,9 @@ function Account() {
           <button onClick={handleEditClick} className={styles.updateButton}>Editar</button>
         )}
       </div>
-
-      {/* Mostrar el correo electrónico */}
       <div className={styles.formRow}>
         <label className={styles.formLabel}>Correo Electrónico</label>
         <div className={styles.formValue}>{email}</div>
-        {/* Por lo general, no se permite editar el correo electrónico desde esta vista */}
       </div>
     </div>
   );

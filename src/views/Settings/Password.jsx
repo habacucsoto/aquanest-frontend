@@ -1,6 +1,5 @@
-// src/views/Settings/Password.jsx
 import React, { useState, useEffect } from 'react';
-import styles from './Settings.module.css'; // Usamos el mismo CSS module
+import styles from './Settings.module.css';
 import axios from 'axios';
 
 const API_URL = 'http://localhost:8080';
@@ -21,20 +20,13 @@ function Password() {
     hasSpecialChar: false,
   });
 
-  // --- useEffect para validar nueva contraseña ---
   useEffect(() => {
-    // Valida longitud (al menos 8 caracteres)
     const minLength = newPassword.length >= 8;
-    // Valida letra mayúscula
     const hasUppercase = /[A-Z]/.test(newPassword);
-    // Valida letra minúscula
     const hasLowercase = /[a-z]/.test(newPassword);
-    // Valida número
     const hasNumber = /[0-9]/.test(newPassword);
-    // Valida carácter especial (ajusta la expresión regular si tus caracteres son diferentes)
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
 
-    // Actualiza el estado de validación
     setPasswordValidation({
       minLength,
       hasUppercase,
@@ -42,14 +34,13 @@ function Password() {
       hasNumber,
       hasSpecialChar,
     });
-  }, [newPassword]); // Este efecto se ejecuta cada vez que el estado 'newPassword' cambia
+  }, [newPassword]);
 
   const handlePasswordUpdate = async (event) => {
     event.preventDefault();
     setError('');
     setSuccess('');
 
-    // --- Validaciones básicas ---
     if (newPassword !== confirmPassword) {
       setError("La nueva contraseña y la confirmación no coinciden.");
       return;
@@ -62,7 +53,6 @@ function Password() {
       setError("La nueva contraseña debe ser diferente a la actual.");
       return;
     }
-    // Añadir validación de requisitos de contraseña más robusta aquí si es necesario
     if (!passwordValidation.minLength || !passwordValidation.hasUppercase || !passwordValidation.hasLowercase || !passwordValidation.hasNumber || !passwordValidation.hasSpecialChar) {
       setError("La nueva contraseña no cumple con los requisitos de seguridad.");
       return;
@@ -71,8 +61,8 @@ function Password() {
     setLoading(true);
     try {
       const response = await axios.post(
-        `${API_URL}/auth/change-password`, // Ajusta la ruta si es diferente
-        { oldPassword: currentPassword, newPassword, confirmPassword }, // <---- CORRECCIÓN AQUÍ
+        `${API_URL}/auth/change-password`,
+        { oldPassword: currentPassword, newPassword, confirmPassword },
         { headers: { Authorization: `Bearer ${getAuthToken()}` } }
       );
       if (response.status === 200) {

@@ -1,45 +1,70 @@
-// src/views/Ponds/Ponds.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import axios from 'axios';
 import styles from './Ponds.module.css';
 import Layout from '../../views/Layout/Layout';
 import pondIcon from '../../assets/Estanque.jpeg';
 import { useNavigate } from 'react-router-dom';
 import { FaTimes } from 'react-icons/fa';
+import mqtt from 'mqtt';
 
+const MQTT_BROKER_URL = 'ws://18.222.108.48:8083/mqtt';
 
-const API_URL = 'http://localhost:8080'; // Ajusta si es diferente
+const API_URL = 'http://localhost:8080';
 const getAuthToken = () => localStorage.getItem('authToken');
 
 function Ponds() {
-  // Estados del formulario
   const [location, setLocation] = useState('');
   const [dimension, setDimension] = useState('');
   const [waterType, setWaterType] = useState('');
   const [selectedSpeciesId, setSelectedSpeciesId] = useState('');
   const [pondName, setPondName] = useState('');
 
-  // --- Nuevos Estados para la lista de ESPECIES ---
   const [speciesList, setSpeciesList] = useState([]);
   const [speciesLoading, setSpeciesLoading] = useState(false);
   const [speciesError, setSpeciesError] = useState('');
-  // ---------------------------------------------
 
-  // Estados para la lista de ESTANQUES
   const [pondsList, setPondsList] = useState([]);
   const [listLoading, setListLoading] = useState(false);
   const [listError, setListError] = useState('');
 
-  // Estados para el formulario
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState('');
-  const navigate = useNavigate(); 
 
   const [deleteError, setDeleteError] = useState('');
   const [deletingId, setDeletingId] = useState(null);
 
-  // --- Función para obtener la lista de ESPECIES ---
-  const fetchSpecies = async () => {
+  const navigate = useNavigate();
+
+  const mqttClientRef = useRef(null);
+
+  useEffect(() => {
+      const client = mqtt.connect(MQTT_BROKER_URL);
+
+      client.on('connect', () => {
+          console.log('[MQTT_CLIENT - Ponds] Conectado al broker MQTT.');
+      });
+
+      client.on('error', (err) => {
+          console.error('[MQTT_CLIENT - Ponds] Error en conexión MQTT:', err);
+      });
+
+      client.on('close', () => {
+           console.log('[MQTT_CLIENT - Ponds] Desconectado del broker MQTT.');
+      });
+
+      mqttClientRef.current = client;
+
+      return () => {
+          if (mqttClientRef.current) {
+              mqttClientRef.current.end(true, () => {
+              });
+              mqttClientRef.current = null;
+          }
+      };
+  }, []);
+
+
+  const fetchSpecies = useCallback(async () => {
     setSpeciesLoading(true);
     setSpeciesError('');
     const token = getAuthToken();
@@ -50,30 +75,25 @@ function Ponds() {
     }
 
     try {
-      // Llamada GET a /especies
       const response = await axios.get(`${API_URL}/especies`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setSpeciesList(response.data || []); // Guarda la lista o un array vacío
+      setSpeciesList(response.data || []);
     } catch (err) {
-      console.error("Error fetching species:", err);
       setSpeciesError("Error al cargar las especies disponibles.");
-      // Manejar errores específicos (401/403)
     } finally {
       setSpeciesLoading(false);
     }
-  };
-  // ----------------------------------------------
+  }, [setSpeciesLoading, setSpeciesError, setSpeciesList]);
 
-  // --- Función para obtener la lista de ESTANQUES ---
-  const fetchPonds = async () => {
+
+  const fetchPonds = useCallback(async () => {
     setListLoading(true);
     setListError('');
     const token = getAuthToken();
     if (!token) {
       setListError("No autenticado.");
       setListLoading(false);
-      // Opcional: redirigir a login
       return;
     }
 
@@ -81,30 +101,27 @@ function Ponds() {
       const response = await axios.get(`${API_URL}/estanques`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setPondsList(response.data); // Asume que la respuesta es la lista directamente
+      setPondsList(response.data);
     } catch (err) {
       console.error("Error fetching ponds:", err);
       setListError("Error al cargar la lista de estanques.");
-      // Manejar errores específicos (401/403 si el token expiró, etc.)
     } finally {
       setListLoading(false);
     }
-  };
+  }, [setListLoading, setListError, setPondsList]);
 
-  // --- Cargar AMBAS listas al montar el componente ---
+
   useEffect(() => {
     fetchPonds();
-    fetchSpecies(); // <-- Llama también a fetchSpecies
-  }, []); // Array vacío = ejecutar solo una vez al montar
-  // ---------------------------------------------------
+    fetchSpecies();
+  }, [fetchPonds, fetchSpecies]);
+
 
   const handlePondClick = (pondId) => {
-    console.log(`Navegando al dashboard del estanque con ID: ${pondId}`);
-    navigate(`/dashboard/${pondId}`); // Navega a la ruta con el ID
+    navigate(`/dashboard/${pondId}`);
   };
 
-  // --- Función para crear un estanque ---
-  const handleCreatePond = async (event) => {
+  const handleCreatePond = useCallback(async (event) => {
     event.preventDefault();
     setFormLoading(true);
     setFormError('');
@@ -130,48 +147,41 @@ function Ponds() {
       especieId: especieIdToSend
     };
 
-    console.log('Enviando para crear estanque:', newPondData);
-
     try {
       const response = await axios.post(`${API_URL}/estanques`, newPondData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       console.log('Estanque creado:', response.data);
-      // Limpiar formulario
       setPondName('');
       setLocation('');
       setDimension('');
       setWaterType('');
       setSelectedSpeciesId('');
-      // Actualizar la lista de estanques
       await fetchPonds();
 
     } catch (err) {
       console.error("Error creando estanque:", err);
       if (err.response) {
         setFormError(`Error del servidor: ${err.response.status}. Verifica los datos.`);
-        // Manejar errores específicos de validación si la API los devuelve
       } else {
         setFormError("Error de red o servidor no responde.");
       }
     } finally {
       setFormLoading(false);
     }
-  };
+  }, [pondName, location, dimension, waterType, selectedSpeciesId, fetchPonds, setFormLoading, setFormError, setPondName, setLocation, setDimension, setWaterType, setSelectedSpeciesId]);
 
-      // --- Función para Eliminar Estanque ---
-      const handleDeletePond = async (event, pondId, pondName) => {
-        event.stopPropagation(); // <-- MUY IMPORTANTE: Evita que se active el clic de la tarjeta (handlePondClick)
-        setDeleteError(''); // Limpia error previo
 
-        // --- Confirmación ---
+      const handleDeletePond = useCallback(async (event, pondId, pondName) => {
+        event.stopPropagation();
+        setDeleteError('');
+
         if (!window.confirm(`¿Estás seguro de que deseas eliminar el estanque "${pondName}"? Esta acción no se puede deshacer.`)) {
-            return; // No hacer nada si el usuario cancela
+            return;
         }
-        // --------------------
 
-        setDeletingId(pondId); // Marca este ID como "eliminando"
+        setDeletingId(pondId);
         const token = getAuthToken();
         if (!token) {
             setDeleteError("Error de autenticación al eliminar.");
@@ -180,33 +190,47 @@ function Ponds() {
         }
 
         try {
-            // Llamada DELETE a la API
             await axios.delete(`${API_URL}/estanques/${pondId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            console.log(`Estanque ${pondId} eliminado.`);
-            // Refresca la lista de estanques para quitar el eliminado
-            await fetchPonds();
+            console.log(`Estanque ${pondId} eliminado vía API.`);
+            const client = mqttClientRef.current;
+            const deleteTopic = `aquanest/E${pondId}/delete`;
+            const payload = '';
+
+            if (client && client.connected) {
+                client.publish(deleteTopic, payload, { qos: 0 }, (err) => {
+                    if (err) {
+                        console.error(`[MQTT_PUBLISH ERROR - Ponds] Error al publicar mensaje de eliminación para estanque ${pondId}:`, err);
+                    } else {
+                        console.log(`[MQTT - Ponds] Mensaje de eliminación publicado exitosamente para estanque ${pondId}.`);
+                    }
+                     fetchPonds();
+                     setDeletingId(null);
+                });
+            } else {
+                console.warn(`[MQTT - Ponds] Cliente MQTT no conectado. No se pudo publicar mensaje de eliminación para estanque ${pondId}.`);
+                 setDeleteError("Estanque eliminado en DB, pero falló notificación MQTT.");
+                 fetchPonds();
+                 setDeletingId(null);
+            }
+
 
         } catch (err) {
-            console.error(`Error eliminando estanque ${pondId}:`, err);
             if (err.response) {
-                setDeleteError(`Error ${err.response.status} al eliminar el estanque.`);
+                 const errorMessage = err.response.data?.message || `Error ${err.response.status} al eliminar el estanque.`;
+                setDeleteError(errorMessage);
             } else {
-                 setDeleteError("Error de red al intentar eliminar.");
+                 setDeleteError("Error de red al intentar eliminar el estanque.");
             }
-            // Podrías mostrar este error cerca de la lista o con un toast/modal
-        } finally {
-            setDeletingId(null); // Termina el estado de eliminación para este ID
+             setDeletingId(null);
         }
-    };
+    }, [fetchPonds, setDeleteError, setDeletingId]);
 
-  // Handler para Radios de Especies
   const handleSpeciesChange = (event) => {
     setSelectedSpeciesId(event.target.value);
   };
 
-  // Handler para otros radios/checkboxes
   const handleCheckboxChange = (setter) => (event) => {
     setter(event.target.value);
   };
@@ -218,12 +242,10 @@ function Ponds() {
       </div>
 
       <div className={styles.contentWrapper}>
-        {/* Sección: Formulario */}
         <div className={styles.formContainer}>
           <h2 className={styles.sectionTitle}>Nuevo estanque</h2>
           {formError && <p style={{ color: 'red' }}>{formError}</p>}
           <form onSubmit={handleCreatePond}>
-            {/* Campo Nombre */}
             <div className={styles.formGroup}>
               <label htmlFor="pondName" className={styles.label}>Nombre del estanque</label>
               <input
@@ -235,7 +257,6 @@ function Ponds() {
                 required
               />
             </div>
-            {/* Locación */}
             <fieldset className={styles.fieldset}>
               <legend className={styles.legend}>Ubicación</legend>
               <div className={styles.radioGroup}>
@@ -287,7 +308,6 @@ function Ponds() {
                 <label htmlFor="location-sur">Zona sur</label>
               </div>
             </fieldset>
-            {/* Dimensiones */}
             <fieldset className={styles.fieldset}>
               <legend className={styles.legend}>Dimensiones</legend>
               <div className={styles.radioGroup}>
@@ -339,7 +359,6 @@ function Ponds() {
                 <label htmlFor="dimension-1000">1000m2</label>
               </div>
             </fieldset>
-            {/* Tipo de agua */}
             <fieldset className={styles.fieldset}>
               <legend className={styles.legend}>Tipo de agua</legend>
               <div className={styles.radioGroup}>
@@ -368,7 +387,6 @@ function Ponds() {
               </div>
             </fieldset>
 
-            {/* --- Especie (Ahora con lista dinámica) --- */}
             <fieldset className={styles.fieldset}>
               <legend className={styles.legend}>Especie</legend>
               {speciesLoading ? (
@@ -376,41 +394,36 @@ function Ponds() {
               ) : speciesError ? (
                 <p style={{ color: 'red' }}>{speciesError}</p>
               ) : speciesList.length > 0 ? (
-                // Mapea sobre la lista obtenida de la API
                 speciesList.map(specie => (
                   <div key={specie.id} className={styles.radioGroup}>
                     <input
                       type="radio"
                       id={`specie-${specie.id}`}
                       name="selectedSpecies"
-                      value={specie.id} // El valor es el ID de la especie
+                      value={specie.id}
                       className={styles.radioInput}
-                      checked={selectedSpeciesId === String(specie.id)} // Compara con el ID seleccionado
+                      checked={selectedSpeciesId === String(specie.id)}
                       onChange={handleSpeciesChange}
                     />
-                    {/* Muestra el nombre de la especie */}
                     <label htmlFor={`specie-${specie.id}`}>{specie.nombre}</label>
                   </div>
                 ))
               ) : (
-                // Mensaje si no hay especies creadas por el usuario
                 <p className={styles.placeholderText}>No hay especies creadas. Crea una especie primero.</p>
               )}
             </fieldset>
-            {/* --------------------------------------- */}
 
-            <button type="submit" className={styles.createButton} disabled={formLoading || speciesLoading || speciesList.length === 0}>
+            <button type="submit" className={styles.createButton} disabled={formLoading || speciesLoading || speciesList.length === 0 || !pondName || !location || !dimension || !waterType || !selectedSpeciesId}>
               {formLoading ? 'Creando...' : 'Crear estanque'}
             </button>
           </form>
         </div>
 
-        {/* Sección: Lista de Estanques */}
         <div className={styles.listContainer}>
           <h2 className={styles.sectionTitle}>Mis estanques</h2>
           {listLoading && <p>Cargando estanques...</p>}
           {listError && <p style={{ color: 'red' }}>{listError}</p>}
-          {deleteError && <p style={{ color: 'red', fontWeight: 'bold' }}>{deleteError}</p>} {/* Mostrar error de eliminación */}
+          {deleteError && <p style={{ color: 'red', fontWeight: 'bold' }}>{deleteError}</p>}
           {!listLoading && !listError && (
             <div className={styles.pondsGrid}>
               {pondsList.length === 0 ? (
@@ -419,16 +432,16 @@ function Ponds() {
                 pondsList.map(pond => (
                 <div
                     key={pond.id}
-                    className={styles.pondCard} // Asegúrate que pondCard tenga cursor: pointer en CSS
-                    onClick={() => handlePondClick(pond.id)} // Llama al handler con el ID
+                    className={styles.pondCard}
+                    onClick={() => handlePondClick(pond.id)}
                   >
                   <button
                     className={styles.deleteButton}
-                    onClick={(e) => handleDeletePond(e, pond.id, pond.nombre)} // Pasar evento, id y nombre
-                    disabled={deletingId === pond.id} // Deshabilitar mientras se elimina
-                    aria-label={`Eliminar estanque ${pond.nombre}`} // Para accesibilidad
+                    onClick={(e) => handleDeletePond(e, pond.id, pond.nombre)}
+                    disabled={deletingId === pond.id}
+                    aria-label={`Eliminar estanque ${pond.nombre}`}
                   >
-                  {deletingId === pond.id ? '...' : <FaTimes />} {/* Icono X o indicador de carga */}
+                  {deletingId === pond.id ? '...' : <FaTimes />}
                   </button>
                     <img
                       src={pondIcon}

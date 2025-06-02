@@ -1,5 +1,3 @@
-/* src/components/Navbar/Navbar.module.css */
-
 .navbar {
     position: fixed;
     top: 0;
@@ -16,7 +14,7 @@
     left: 20px;
     font-size: 1.5rem;
     cursor: pointer;
-    z-index: 1100; /* Asegúrate de que esté por encima de la navbar (999) */
+    z-index: 1100;
     color: #000;
     padding: 10px;
     transition: transform 0.3s ease-in-out;
@@ -32,10 +30,10 @@
   }
   
   .logo {
-    width: 180px; /* Tamaño grande por defecto (abierta) */
+    width: 180px;
     height: auto;
     margin-bottom: -10px;
-    transition: width 0.3s ease-in-out; /* Transición para el cambio de ancho */
+    transition: width 0.3s ease-in-out;
   }
   
   .appName {
@@ -71,10 +69,10 @@
     text-align: left;
     border: none;
     background: none;
-    color: transparent; /* El texto es transparente por defecto en estado cerrado */
+    color: transparent;
     cursor: pointer;
     font-size: 1rem;
-    transition: opacity 0.3s ease-in-out, background-color 0.2s ease, color 0s 0.3s; /* Añade transición para el color con un delay */
+    transition: opacity 0.3s ease-in-out, background-color 0.2s ease, color 0s 0.3s;
   }
   
   .navIcon {
@@ -105,19 +103,19 @@
   
   .closed .navLinks li button,
   .closed .userButton {
-    justify-content: center; /* Centra el icono */
+    justify-content: center;
     padding: 10px;
-    color: transparent; /* Asegura que el texto siga transparente */
+    color: transparent;
   }
   
   .open {
-    width: 220px; /* por ejemplo */
+    width: 220px;
     padding: 10px;
   }
 
   .navLinks li button,
   .open .userButton {
-    color: #333; /* Restaura el color del texto en estado abierto */
+    color: #333;
   }
 
   
@@ -127,8 +125,8 @@
   }
   
   .closed .logo {
-    width: 60px; /* Tamaño chico cuando está cerrada */
-    margin-left: 0; /* Ajusta el margen si es necesario */
+    width: 60px;
+    margin-left: 0;
   }
   
   .closed .toggleIcon {
@@ -155,8 +153,8 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    width: 100%; /* Ocupa todo el ancho de la navbar */
-    padding: 12px 40px; /* Espacio interno */
+    width: 100%;
+    padding: 12px 40px;
     text-align: left;
     border: none;
     background: none;
@@ -164,8 +162,8 @@
     cursor: pointer;
     font-size: 1rem;
     text-decoration: none;
-    transition: color 0.2s ease, font-size 0.2s ease, background-color 0.2s ease; /* Añade transición para el background-color */
-    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+    transition: color 0.2s ease, font-size 0.2s ease, background-color 0.2s ease;
+    box-sizing: border-box;
   }
   
   .navLinks li .navLink:hover,
@@ -178,7 +176,7 @@
   .userButton .navIcon {
     margin-right: 10px;
     font-size: 1.2rem;
-    color: #aaa; /* Color gris para los iconos por defecto */
+    color: #aaa;
     transition: margin-right 0.3s ease-in-out, font-size 0.3s ease-in-out, color 0.2s ease;
   }
   
@@ -191,13 +189,13 @@
   
   .navLinks li .navLink.active,
   .userButton.active {
-    color: #007bff; /* Color azul cuando está activo */
-    font-size: 1.05rem; /* Ligeramente más grande cuando está activo */
+    color: #007bff;
+    font-size: 1.05rem;
   }
   
   .navLinks li .navLink.active .navIcon,
   .userButton.active .navIcon {
-    color: #007bff; /* Color azul para el icono activo */
+    color: #007bff;
   }
   
   .closed .navLinks li .navLink span,
@@ -215,14 +213,14 @@
     padding: 8px 15px;
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
-    color: #dc3545; /* Color rojo para logout */
+    color: #dc3545;
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.2s ease;
-    margin-top: 20px; /* Ajusta la ubicación vertical si es necesario */
-    align-self: flex-start; /* Alinea a la izquierda dentro del flex column */
-    margin-left: 38px; /* Añade un poco de margen izquierdo */
+    margin-top: 20px;
+    align-self: flex-start;
+    margin-left: 38px;
   }
   
   .logoutButton:hover {
@@ -231,7 +229,7 @@
 
   .closed .logoutButton {
     opacity: 0;
-    transition: opacity 0.3s ease-in-out 0.1s; /* Misma transición que otros elementos */
+    transition: opacity 0.3s ease-in-out 0.1s;
   }
 
   .navLinks li {
@@ -241,7 +239,7 @@
   .linksSeparator {
     width: 100%;
     height: 1px;
-    background-color: transparent; /* Para que sea solo espacio */
-    margin: 100px 0; /* Ajusta el margen para el espacio deseado */
+    background-color: transparent;
+    margin: 100px 0;
   }
   

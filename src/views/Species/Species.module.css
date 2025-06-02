@@ -1,8 +1,6 @@
-/* src/views/Ponds/Ponds.module.css */
-
 .pageContainer {
     padding: 60px;
-    font-family: sans-serif; /* O la fuente que estés usando */
+    font-family: sans-serif;
   }
   
   .header {
@@ -24,11 +22,11 @@
   
   .contentWrapper {
     display: flex;
-    gap: 20px; /* Espacio entre columnas */
+    gap: 20px;
   }
   
   .listContainer {
-    flex: 1; /* Ocupa el espacio restante */
+    flex: 1;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 25px;
@@ -37,10 +35,10 @@
   }
   
   .formContainer {
-    flex: 0 0 auto; /* No crecer, no encoger, tamaño automático basado en el contenido o el ancho máximo */
-    width: 280px; /* Establece un ancho fijo para el formulario (ajusta este valor) */
-    max-width: 30%; /* Opcional: establece un ancho máximo como porcentaje del contenedor */
-    min-width: 100px; /* Ancho mínimo para evitar que se comprima demasiado */
+    flex: 0 0 auto;
+    width: 280px;
+    max-width: 30%;
+    min-width: 100px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 25px;
@@ -48,16 +46,16 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
   
-  .sectionTitle { /* Para "Nuevo estanque" y "Mis Estanques" */
+  .sectionTitle {
     font-size: 1.4rem;
-    color: #0056b3; /* Azul */
+    color: #0056b3;
     margin-top: 0;
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
   }
   
-  .formGroup { /* Contenedor para label + input */
+  .formGroup {
       margin-bottom: 20px;
   }
   
@@ -99,7 +97,7 @@
   }
   
   .radioGroup,
-  .checkboxGroup { /* Divs dentro de fieldset */
+  .checkboxGroup {
     margin-bottom: 8px;
     display: flex;
     align-items: center;
@@ -107,12 +105,11 @@
   
   .radioGroup label,
   .checkboxGroup label {
-    margin-left: 8px; /* Espacio entre radio/checkbox y label */
-    font-weight: normal; /* Sobreescribe .label si es necesario */
+    margin-left: 8px;
+    font-weight: normal;
     color: #333;
   }
   
-  /* Estilo para los inputs radio/checkbox si quieres personalizarlos */
   .radioInput,
   .checkboxInput {
     margin-right: 5px;
@@ -123,7 +120,7 @@
   .createButton {
     width: 100%;
     padding: 12px 15px;
-    background-color: #28a745; /* Verde */
+    background-color: #28a745;
     color: white;
     border: none;
     border-radius: 4px;
@@ -147,30 +144,30 @@
     display: flex;
     flex-wrap: wrap;
     gap: 15px;
-    margin-top: 15px; /* Opcional: espacio entre el título y la lista */
+    margin-top: 15px;
   }
 
   .specieCard {
     border: 1px solid #e9ecef;
     background-color: #f8f9fa;
     border-radius: 6px;
-    margin-bottom: 0; /* Elimina el margen inferior, ya que el espaciado se gestiona con gap en .listContainer */
+    margin-bottom: 0;
     display: flex;
-    flex-direction: column; /* Imagen encima, información debajo */
-    align-items: center; /* Centra horizontalmente */
-    justify-content: flex-start; /* Alinea los elementos al inicio (arriba) */
-    width: 250px; /* Define el ancho del cuadrado */
-    height: 250px; /* Define la altura del cuadrado */
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 250px;
+    height: 250px;
     padding: 15px;
-    text-align: center; /* Centra el texto por defecto */
-    overflow: hidden; /* Asegura que la imagen no se desborde */
+    text-align: center;
+    overflow: hidden;
   }
   
   .fishIcon {
-    width: 180px; /* Ajusta el tamaño del icono */
+    width: 180px;
     height: auto;
-    margin-bottom: 0px; /* Reduce el espacio entre la imagen y la información */
-    margin-top: 0px; /* Reduce el espacio desde la parte superior */
+    margin-bottom: 0px;
+    margin-top: 0px; 
   }
   
   .specieCardInfo {

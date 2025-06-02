@@ -4,8 +4,7 @@ import Navbar from '../Navbar/Navbar';
 import styles from './Layout.module.css';
 
 function Layout({ children }) {
-  const [isNavbarOpen, setIsNavbarOpen] = useState(false); // Estado para controlar si la Navbar está abierta
-
+  const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const handleNavbarToggle = (isOpen) => {
     setIsNavbarOpen(isOpen);
   };

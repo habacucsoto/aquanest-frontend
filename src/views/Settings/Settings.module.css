@@ -1,7 +1,6 @@
-/* src/views/Settings/Settings.module.css */
 .settingsContainer {
     padding: 20px;
-    margin: 20px auto; /* Centrar con margen */
+    margin: 20px auto;
 }
 
 .settingsContainer h1 {
@@ -14,15 +13,15 @@
 
 .settingsContent {
     display: flex;
-    gap: 30px; /* Espacio entre navegación y panel */
+    gap: 30px;
 }
 
 .settingsNav {
     display: flex;
-    flex-direction: column; /* Navegación vertical */
+    flex-direction: column;
     gap: 10px;
-    min-width: 180px; /* Ancho mínimo de la navegación */
-    border-right: 1px solid #eee; /* Separador */
+    min-width: 180px;
+    border-right: 1px solid #eee;
     padding-right: 30px;
 }
 
@@ -39,14 +38,14 @@
     background-color: #f0f0f0;
 }
 
-.activeLink { /* Estilo para el enlace activo */
-    background-color: #e7f3ff; /* Un azul claro */
+.activeLink {
+    background-color: #e7f3ff;
     color: #0056b3;
     font-weight: bold;
 }
 
 .settingsPanel {
-    flex-grow: 1; /* Ocupa el resto del espacio */
+    flex-grow: 1;
 }
 
 .panelDescription {
@@ -55,7 +54,6 @@
     font-size: 0.9rem;
 }
 
-/* Estilos para formularios dentro del panel */
 .formRow {
     display: flex;
     align-items: center;
@@ -67,12 +65,12 @@
 .formLabel {
     font-weight: bold;
     color: #495057;
-    flex-basis: 200px; /* Espacio fijo para labels */
+    flex-basis: 200px;
 }
 
 .formValue {
     color: #333;
-    flex-grow: 1; /* Ocupa espacio restante */
+    flex-grow: 1;
     margin: 0 15px;
 }
 
@@ -96,7 +94,7 @@
 }
 
 .submitButton {
-    background-color: #007bff; /* Azul */
+    background-color: #007bff;
     color: white;
 }
 .submitButton:hover {
@@ -111,27 +109,25 @@
 .cancelButton {
     background-color: #f8f9fa;
     border-color: #dee2e6;
-    color: #dc3545; /* Rojo */
+    color: #dc3545;
     margin-right: 10px;
 }
 .cancelButton:hover {
      background-color: #e2e6ea;
 }
 
-
-/* Estilos para forms verticales (como el de contraseña) */
 .formGroup {
     margin-bottom: 20px;
 }
 
-.label { /* Reutiliza si es igual a .formLabel */
+.label {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
     color: #495057;
 }
 
-.input { /* Reutiliza de otros módulos si tienes un estilo global */
+.input {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #ced4da;
@@ -142,7 +138,7 @@
 
 .buttonGroup {
     display: flex;
-    justify-content: flex-end; /* Alinea botones a la derecha */
+    justify-content: flex-end;
     margin-top: 25px;
 }
 
@@ -152,14 +148,13 @@
     color: #6c757d;
 }
 
-/* Logout button specific style */
 .logoutButton {
-    margin-top: 20px; /* Espacio arriba */
+    margin-top: 20px;
     padding: 10px 15px;
-    width: 100%; /* Ocupa ancho de nav */
-    background-color: #ffebee; /* Fondo rojo claro */
+    width: 100%;
+    background-color: #ffebee;
     border: 1px solid #dc3545;
-    color: #dc3545; /* Texto rojo */
+    color: #dc3545;
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
@@ -167,10 +162,9 @@
 }
 
 .logoutButton:hover {
-    background-color: #ffcdd2; /* Rojo más claro al pasar */
+    background-color: #ffcdd2;
 }
 
-/* Nuevos estilos para la edición del nombre en Account.jsx */
 .inputField {
   flex: 1;
   padding: 8px;
@@ -223,32 +217,30 @@
 
 .passwordRequirements li {
   margin-bottom: 4px;
-  transition: color 0.3s ease; /* Transición suave del color */
+  transition: color 0.3s ease; 
 }
 
-/* Estilo para requisito CUMPLIDO */
 .valid {
-  color: #28a745; /* Verde */
+  color: #28a745;
 }
 
-/* Estilo para requisito NO CUMPLIDO */
 .invalid {
-  color: #e61616; /* Rojo */
+  color: #e61616;
 }
 
 .icon {
-  display: inline-block; /* Asegura que el margen funcione correctamente */
-  margin-right: 8px; /* Espacio entre el icono y el texto */
-  width: 15px; /* Ancho fijo para alinear iconos (ajusta si es necesario) */
-  text-align: center; /* Centra el icono dentro del span */
+  display: inline-block;
+  margin-right: 8px;
+  width: 15px;
+  text-align: center;
 }
 
 .errorMessage {
-  color: #dc3545; /* Rojo */
+  color: #dc3545;
   margin-top: 10px;
 }
 
 .successMessage {
-  color: #28a745; /* Verde */
+  color: #28a745;
   margin-top: 10px;
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from '../Layout/Layout';
 import styles from './Dashboard.module.css';
@@ -62,7 +62,6 @@ function Dashboard() {
                     numericPart = prefixedId.substring(prefix.length);
                     break;
                 } else {
-                    console.warn(`[MQTT_MSG] ID prefijado es solo el prefijo sin número: ${prefixedId}`);
                     return null;
                 }
             }
@@ -71,12 +70,10 @@ function Dashboard() {
         try {
             const numericId = parseInt(numericPart, 10);
             if (isNaN(numericId)) {
-                 console.warn(`[MQTT_MSG] La parte numérica '${numericPart}' del ID '${prefixedId}' no es un número válido.`);
                  return null;
             }
             return numericId;
         } catch (e) {
-            console.error(`[MQTT_MSG] Error parseando la parte numérica '${numericPart}' del ID '${prefixedId}':`, e);
             return null;
         }
     };
@@ -96,7 +93,6 @@ function Dashboard() {
             });
             setPondData(response.data || null);
         } catch (error) {
-            console.error("Error fetching pond data:", error);
             setPondError("Error al cargar la información del estanque.");
         } finally {
             setPondLoading(false);
@@ -104,10 +100,8 @@ function Dashboard() {
     }, []);
 
     const fetchAlertsAndLogsForPond = useCallback(async () => {
-        // Asegurarse de tener pondData cargado y que contenga sensores/actuadores
         if (!pondData || (!pondData.sensores && !pondData.actuadores)) {
             setAlertsList([]);
-            console.log("[ALERTS_API] No hay datos de estanque o sensores/actuadores para filtrar alertas históricas.");
             return;
         }
 
@@ -122,14 +116,10 @@ function Dashboard() {
 
         try {
             let combinedNotifications = [];
-
-            // 1. Obtener y filtrar Alertas de Sensores
             const allAlertsResponse = await axios.get(`${API_URL}/alerta`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const allAlerts = allAlertsResponse.data || [];
-
-            // IDs de los sensores asociados a este estanque
             const sensorIdsDelEstanque = pondData.sensores ? pondData.sensores.map(sensor => sensor.id) : [];
 
             const filteredSensorAlerts = allAlerts.filter(alerta =>
@@ -142,36 +132,26 @@ function Dashboard() {
                 message: alerta.mensaje || 'Alerta de sensor'
             }));
             combinedNotifications.push(...filteredSensorAlerts);
-            console.log(`[ALERTS_API] ${filteredSensorAlerts.length} alertas de sensor históricas filtradas para el estanque ${pondId}.`);
 
-            // 2. Obtener y filtrar Logs de Actuadores (Heartbeat Errors)
             const allLogsResponse = await axios.get(`${API_URL}/log`, {
                 headers: { Authorization: `Bearer ${token}`}
             });
             const allLogs = allLogsResponse.data || [];
-
-            // IDs de los actuadores asociados a este estanque
-            // **IMPORTANTE**: Asegúrate que pondData.actuadores existe y es un array de objetos con 'id'.
-            // Si tu API /estanques/{id} no devuelve los actuadores, esto necesitará ajuste en el backend.
             const actuadorIdsDelEstanque = pondData.actuadores ? pondData.actuadores.map(actuador => actuador.id) : [];
 
-            const filteredHeartbeatLogs = allLogs.filter(log =>
-                // Filtra por 'Heartbeat Error' y verifica que el actuador.id esté en la lista de IDs de actuadores del estanque
-                log.accion === 'Heartbeat Error' &&
+            const filteredActuatorLogs = allLogs.filter(log =>
+                (log.accion === 'Heartbeat Error' || log.accion === 'Status Update') &&
                 log.actuador?.id !== undefined && actuadorIdsDelEstanque.includes(log.actuador.id)
             ).map(log => ({
                 id: `api-log-${log.id}`,
-                type: 'Error Heartbeat Histórico de Actuador',
+                type: log.accion === 'Heartbeat Error' ? 'Error Heartbeat Histórico de Actuador' : 'Actualización de Estado Histórica de Actuador',
                 timestamp: new Date(log.timestamp),
-                message: `Error Heartbeat en Actuador ID ${log.actuador.id}. Resultado: ${log.resultado}`
+                message: `Actuador ID ${log.actuador.id} - ${log.accion}: ${log.resultado}`
             }));
-            combinedNotifications.push(...filteredHeartbeatLogs);
-            console.log(`[ALERTS_API] ${filteredHeartbeatLogs.length} errores de Heartbeat históricos filtrados para el estanque ${pondId}.`);
+            combinedNotifications.push(...filteredActuatorLogs);
 
-            // 3. Combinar y ordenar todas las notificaciones
             combinedNotifications.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
             setAlertsList(combinedNotifications.slice(0, MAX_ALERTS));
-            console.log(`[ALERTS_API] ${combinedNotifications.length} notificaciones históricas totales cargadas para el estanque ${pondId}.`);
 
         } catch (error) {
             console.error("Error al cargar alertas y logs históricos:", error);
@@ -179,23 +159,18 @@ function Dashboard() {
         } finally {
             setAlertsLoading(false);
         }
-    }, [pondData, pondId]); // Dependencias: pondData (para sensores/actuadores) y pondId
-
+    }, [pondData, pondId]);
 
     const subscribeToPondTopics = useCallback((client, currentPondId, sensors) => {
         if (!client || !client.connected || !currentPondId) {
             console.warn("[MQTT_SUBSCRIBE] No se puede suscribir: Cliente no conectado o sin pondId.");
             return;
         }
-
-        console.log(`[MQTT_SUBSCRIBE] Suscribiendo a tópicos del estanque ID: ${currentPondId}...`);
-
         const topicsToSubscribe = [];
 
         if (sensors && sensors.length > 0) {
             sensors.forEach(sensor => {
                 if (!sensor || sensor.id === undefined || !sensor.tipo) {
-                     console.warn("[MQTT_SUBSCRIBE] Sensor inválido encontrado:", sensor);
                      return;
                 }
                 let sensorPrefix;
@@ -203,7 +178,6 @@ function Dashboard() {
                     case 'temperatura': sensorPrefix = 'ST'; break;
                     case 'nitrato': sensorPrefix = 'SN'; break;
                     default:
-                        console.warn(`[MQTT_SUBSCRIBE] Tipo de sensor desconocido '${sensor.tipo}' para sensor ID ${sensor.id}.`);
                         return;
                 }
                 const sensorDataTopic = `aquanest/E${currentPondId}/${sensorPrefix}${sensor.id}/data/+`;
@@ -213,23 +187,16 @@ function Dashboard() {
                      [sensor.id]: prevData[sensor.id] || []
                  }));
             });
-            console.log(`[MQTT_SUBSCRIBE] Añadidos tópicos de datos de sensores (${sensors.length}):`, topicsToSubscribe.filter(t => t.includes('/data/')));
-        } else {
-            console.log("[MQTT_SUBSCRIBE] No hay sensores configurados para este estanque. No se suscribirá a tópicos de datos específicos.");
         }
 
          topicsToSubscribe.push(`aquanest/E${currentPondId}/+/alert/anomalous`);
-         console.log(`[MQTT_SUBSCRIBE] Añadido tópico de alertas anómalas: aquanest/E${currentPondId}/+/alert/anomalous`);
-
          topicsToSubscribe.push(`aquanest/E${currentPondId}/+/heartbeat/error`);
-         console.log(`[MQTT_SUBSCRIBE] Añadido tópico de errores heartbeat: aquanest/E${currentPondId}/+/heartbeat/error`);
 
         if (topicsToSubscribe.length > 0) {
              client.subscribe(topicsToSubscribe, { qos: 0 }, (err) => {
                  if (err) {
                      console.error(`[MQTT_SUBSCRIBE ERROR] Error al suscribir a tópicos:`, err);
                  } else {
-                     console.log(`[MQTT_SUBSCRIBE] Suscripción exitosa a los siguientes tópicos:`, topicsToSubscribe);
                  }
              });
         } else {
@@ -243,7 +210,6 @@ function Dashboard() {
              console.warn("[MQTT_UNSUBSCRIBE] No se puede desuscribir: Cliente no válido o sin pondId.");
              return;
          }
-         console.log(`[MQTT_UNSUBSCRIBE] Desuscribiendo tópicos del estanque ID: ${currentPondId}...`);
 
         const topicsToUnsubscribe = [];
 
@@ -268,39 +234,30 @@ function Dashboard() {
              client.unsubscribe(topicsToUnsubscribe, (err) => {
                  if (err) {
                      console.error(`[MQTT_UNSUBSCRIBE ERROR] Error al desuscribir de tópicos:`, err);
-                 } else {
-                     console.log(`[MQTT_UNSUBSCRIBE] Desuscripción exitosa de los siguientes tópicos:`, topicsToUnsubscribe);
-                 }
+                 } 
              });
          } else {
               console.warn("[MQTT_UNSUBSCRIBE] Lista de tópicos para desuscribir está vacía.");
          }
     }, []);
 
-
     useEffect(() => {
         console.log(`[MQTT_EFFECT 1] Inicializando/Conectando cliente MQTT para estanque ID: ${pondId}`);
 
         if (mqttClientRef.current && mqttClientRef.current.connected) {
-             console.log("[MQTT_EFFECT 1 CLEANUP] Cliente MQTT existente conectado. Evitando doble conexión.");
              return () => { /* cleanup will run on dismount or pondId change */ };
         }
          if (mqttClientRef.current && !mqttClientRef.current.connected) {
-              console.log("[MQTT_EFFECT 1] Cliente MQTT existente pero no conectado. Intentando conectar.");
          }
 
          if (!mqttClientRef.current) {
-              console.log("[MQTT_EFFECT 1] No hay cliente MQTT existente. Creando nuevo cliente.");
              const client = mqtt.connect(MQTT_BROKER_URL);
              mqttClientRef.current = client;
 
              client.on('connect', () => {
-                 console.log('[MQTT_CLIENT] Cliente MQTT conectado al broker.');
                  if (pondData && (pondData.sensores || pondData.actuadores)) { // Check for both
-                     console.log("[MQTT_CLIENT] Cliente conectado y pondData disponible. Procediendo a suscribir.");
                      subscribeToPondTopics(client, pondId, pondData.sensores); // Pass sensors, actuadores for MQTT sub if needed
                  } else {
-                      console.log("[MQTT_CLIENT] Cliente conectado, pero pondData aún no disponible. Suscripción pendiente.");
                  }
              });
 
@@ -313,8 +270,6 @@ function Dashboard() {
              });
 
              client.on('message', (topic, message) => {
-                 console.log(`[MQTT_MSG] ### Mensaje Recibido EN HANDLER ### Tópico: '${topic}', Payload: '${message.toString()}'`);
-
                  const topicParts = topic.split('/');
 
                  if (topicParts[0] !== 'aquanest') {
@@ -329,24 +284,19 @@ function Dashboard() {
                  const rawPondIdFromTopic = topicParts[1];
                  const receivedPondNumericId = extractNumericId(rawPondIdFromTopic);
 
-                 // This check ensures only messages for the current pond are processed
                  if (receivedPondNumericId === null || receivedPondNumericId !== parseInt(pondId, 10)) {
                       console.warn(`[MQTT_MSG] Recibido mensaje para estanque raw '${rawPondIdFromTopic}' (${receivedPondNumericId}) pero el dashboard actual es para estanque ID ${pondId}. Ignorando.`);
                       return;
                  }
-
 
                  if (topicParts.length === 5 && topicParts[3] === 'data') {
                      const rawDeviceId = topicParts[2];
                      const _dataType = topicParts[4];
                      const stringValue = message.toString();
 
-                     console.log(`[MQTT_MSG] Posible dato de sensor. Dispositivo Raw: ${rawDeviceId}, Tipo Dato: ${_dataType}, Valor String: ${stringValue}`);
-
                      try {
                          const deviceDbId = extractNumericId(rawDeviceId);
                          if (deviceDbId === null) {
-                             console.warn(`[MQTT_MSG] ID de dispositivo raw '${rawDeviceId}' en /data tópico '${topic}' no tiene un formato prefijado válido.`);
                              return;
                          }
 
@@ -354,10 +304,8 @@ function Dashboard() {
                          if (sensorMatch) {
                              const numericValue = parseFloat(stringValue);
                              if (isNaN(numericValue)) {
-                                 console.warn(`[MQTT_MSG] Payload de datos no es un número: '${stringValue}' en tópico '${topic}'`);
                                  return;
                              }
-                             console.log(`[MQTT_MSG] Coincidencia encontrada con sensor ID DB ${sensorMatch.id} (Tipo: ${sensorMatch.tipo}). Actualizando estado liveSensorData.`);
 
                              setLiveSensorData(prevData => {
                                  const currentHistory = prevData[sensorMatch.id] || [];
@@ -379,19 +327,14 @@ function Dashboard() {
                  }
 
                  else if (topicParts.length >= 5 && topicParts[topicParts.length - 2] === 'alert' && topicParts[topicParts.length - 1] === 'anomalous') {
-                      const rawDeviceId = topicParts[topicParts.length === 6 ? 3 : 2]; // Depends on how many path segments
+                      const rawDeviceId = topicParts[topicParts.length === 6 ? 3 : 2];
                       const alertPayload = message.toString();
-
-                      console.log(`[MQTT_MSG] Posible alerta anómala. Dispositivo Raw: ${rawDeviceId}, Payload: ${alertPayload}`);
-
                       try {
                            const deviceDbId = extractNumericId(rawDeviceId);
                            if (deviceDbId === null) {
                               console.warn(`[MQTT_MSG] ID de dispositivo raw '${rawDeviceId}' en /alert/anomalous tópico '${topic}' no tiene un formato prefijado válido.`);
                               return;
                           }
-
-                         // Match against known sensors or actuators for this pond (if available in pondData)
                          const deviceMatch = pondData?.sensores?.find(s => s.id === deviceDbId) ||
                                            pondData?.actuadores?.find(a => a.id === deviceDbId);
 
@@ -408,9 +351,6 @@ function Dashboard() {
                              const newAlerts = [nuevaAlerta, ...prevAlerts];
                              return newAlerts.slice(0, MAX_ALERTS);
                          });
-
-                          console.log(`[MQTT_MSG] Notificación de Alerta MQTT añadida.`);
-
                       } catch (e) {
                            console.error(`[MQTT_MSG] Error procesando alerta de tópico '${topic}':`, e);
                       }
@@ -419,11 +359,8 @@ function Dashboard() {
                   else if (topicParts.length === 5 &&
                            topicParts[3] === 'heartbeat' && topicParts[4] === 'error'
                           ) {
-                      const rawDeviceId = topicParts[2]; // Ahora el ID del dispositivo es topicParts[2]
+                      const rawDeviceId = topicParts[2];
                       const errorMessage = message.toString();
-
-                      console.log(`[MQTT_MSG] Posible error heartbeat. Dispositivo Raw: ${rawDeviceId}, Mensaje: ${errorMessage}`);
-
                       try {
                            const deviceDbId = extractNumericId(rawDeviceId);
                             if (deviceDbId === null) {
@@ -451,9 +388,6 @@ function Dashboard() {
                               const newAlerts = [nuevoError, ...prevAlerts];
                               return newAlerts.slice(0, MAX_ALERTS);
                           });
-
-                           console.log(`[MQTT_MSG] Notificación de Error Heartbeat MQTT añadida.`);
-
                       } catch (e) {
                            console.error(`[MQTT_MSG] Error procesando error heartbeat de tópico '${topic}':`, e);
                       }
@@ -461,9 +395,7 @@ function Dashboard() {
 
                   else if (topicParts.length === 3 && topicParts[2] === 'delete') {
                        const deletePayload = message.toString();
-                       console.log(`[MQTT_MSG] Posible eliminación de estanque. Payload: ${deletePayload}`);
                   }
-
                  else {
                       console.warn(`[MQTT_MSG] Mensaje recibido con formato de tópico desconocido para estanque ${pondId}: '${topic}'`);
                  }
@@ -471,10 +403,8 @@ function Dashboard() {
          }
 
         return () => {
-            console.log('[MQTT_EFFECT 1 CLEANUP] Desmontando Dashboard, cerrando conexión MQTT.');
             if (mqttClientRef.current) {
                 mqttClientRef.current.end(true, () => {
-                    console.log('[MQTT_EFFECT 1 CLEANUP] Cliente MQTT desconectado.');
                 });
                 mqttClientRef.current = null;
             }
@@ -499,7 +429,6 @@ function Dashboard() {
         }
 
         return () => {
-            console.log('[MQTT_EFFECT 2 CLEANUP] Limpieza de suscripciones...');
              if (mqttClientRef.current && pondData) {
                  console.log(`[MQTT_EFFECT 2 CLEANUP] Desuscribiendo tópicos del estanque ID ${pondId} (usando datos previos de pondData).`);
                  unsubscribeFromPondTopics(mqttClientRef.current, pondId, pondData.sensores);
@@ -509,21 +438,16 @@ function Dashboard() {
         };
     }, [pondData, pondId, subscribeToPondTopics, unsubscribeFromPondTopics]);
 
-    // Cargar la información del estanque Y las alertas históricas al montar o si pondId cambia
     useEffect(() => {
         if (pondId) {
-            console.log(`[POND_DATA_EFFECT] Dashboard cargado para el estanque ID: ${pondId}. Iniciando carga de pondData y notificaciones históricas.`);
-            fetchPondData(pondId); // Carga los datos del estanque, incluyendo sensores y actuadores
-            // Una vez que pondData se establece, el useEffect de abajo se ejecutará para las alertas/logs.
+            fetchPondData(pondId);
             setAlertsList([]);
             setLiveSensorData({});
         }
     }, [pondId, fetchPondData]);
 
-    // Nuevo useEffect que se dispara cuando pondData cambia para cargar las alertas/logs
     useEffect(() => {
         if (pondData && (pondData.sensores || pondData.actuadores)) {
-            // Llama al nuevo método combinado
             fetchAlertsAndLogsForPond();
         }
     }, [pondData, fetchAlertsAndLogsForPond]);
@@ -568,7 +492,13 @@ function Dashboard() {
                     </h1>
                     {pondLoading && <p>Cargando información del estanque...</p>}
                     {pondError && <p className={styles.errorText}>{pondError}</p>}
+                    <div className={styles.historyButtonContainer}>
+                        <Link to={`/historical-data/${pondId}`} className={styles.historicalButton}>
+                            Graficas Históricas
+                        </Link>
                 </div>
+                </div>
+
 
                 <div className={styles.gridContainer}>
                     <div className={styles.controlContainer} onClick={goToControlTemperatura}>
@@ -621,8 +551,9 @@ function Dashboard() {
                                         <tr key={notificacion.id}>
                                             <td>
                                                 <span className={
-                                                    notificacion.type.includes('Alerta') ? styles.statusPendiente
-                                                    : notificacion.type.includes('Error') ? styles.statusResuelta
+                                                    notificacion.type.includes('Alerta') ? styles.statusAlerta
+                                                    : notificacion.type.includes('Error') ? styles.statusError
+                                                    : notificacion.type.includes('Estado') ? styles.statusCambioEstado
                                                     : ''
                                                 }>
                                                     {notificacion.type || 'N/A'}

@@ -1,10 +1,9 @@
-// src/components/Navbar/Navbar.jsx
 import React, { useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../assets/LogoAquaNest.png';
 import styles from './Navbar.module.css';
-import { FaBars, FaWater, FaTachometerAlt, FaFish, FaUser } from 'react-icons/fa'; // Importa más iconos
-import { motion } from 'framer-motion'; // Importa la librería de animación
+import { FaBars, FaWater, FaTachometerAlt, FaFish, FaUser } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 function Navbar({ isOpen, onToggle }) {
     const navigate = useNavigate();
@@ -36,7 +35,7 @@ function Navbar({ isOpen, onToggle }) {
       closed: { rotate: 0 },
     };
   
-    const location = useLocation(); // Obtiene la ubicación actual
+    const location = useLocation();
   
     const isActive = (path) => {
         return location.pathname.startsWith(path);
@@ -69,17 +68,17 @@ function Navbar({ isOpen, onToggle }) {
           </li>
           <li key="dashboard">
             {location.pathname.startsWith('/control-nitrate/') || location.pathname.startsWith('/control-temperature/') || location.pathname.startsWith('/dashboard/') ? (
-              <span className={`${styles.navLink} ${styles.active}`}> {/* Usa un <span> y aplica active */}
+              <span className={`${styles.navLink} ${styles.active}`}>
                 <FaTachometerAlt className={styles.navIcon} />
                 <span>Dashboard</span>
               </span>
             ) : location.pathname === '/dashboard' ? (
-              <span className={`${styles.navLink} ${styles.active}`}> {/* Usa un <span> y aplica active si es exactamente /dashboard */}
+              <span className={`${styles.navLink} ${styles.active}`}>
                 <FaTachometerAlt className={styles.navIcon} />
                 <span>Dashboard</span>
               </span>
             ) : (
-              <span className={`${styles.navLink}`}> {/* Usa un <span> sin la clase active */}
+              <span className={`${styles.navLink}`}>
                 <FaTachometerAlt className={styles.navIcon} />
                 <span>Dashboard</span>
               </span>
@@ -95,7 +94,7 @@ function Navbar({ isOpen, onToggle }) {
           <li key="usuario">
              <Link
                 to="/settings/profile"
-                className={`${styles.navLink} ${isActive('/settings') ? styles.active : ''}`} // <-- Cambio aquí: '/settings'
+                className={`${styles.navLink} ${isActive('/settings') ? styles.active : ''}`}
              >
                 <FaUser className={styles.navIcon} />
                 <span>Usuario</span>
@@ -103,7 +102,7 @@ function Navbar({ isOpen, onToggle }) {
           </li>
         </ul>
         <div className={styles.separatorTop}></div>
-        <button className={styles.logoutButton} onClick={handleLogout}>Cerrar sesión</button> {/* Botón añadido */}
+        <button className={styles.logoutButton} onClick={handleLogout}>Cerrar sesión</button>
       </nav>
       </>
     );

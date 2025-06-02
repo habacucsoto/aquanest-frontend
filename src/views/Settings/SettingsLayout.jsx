@@ -1,26 +1,24 @@
-// src/views/Settings/SettingsLayout.jsx
 import React from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'; // Importa NavLink y Outlet
-import styles from './Settings.module.css'; // Necesitaremos crear este CSS
-import Layout from '../Layout/Layout'; // Asumiendo que usas el Layout principal aquí
-import { FaUser, FaShieldAlt } from 'react-icons/fa'; // Importa iconos de Font Awesome
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import styles from './Settings.module.css';
+import Layout from '../Layout/Layout';
+import { FaUser, FaShieldAlt } from 'react-icons/fa';
 
 function SettingsLayout() {
-  const navigate = useNavigate(); // Para el botón de logout
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     console.log('Cerrando sesión...');
-    localStorage.removeItem('authToken'); // Limpia el token
-    navigate('/login'); // Redirige a login
+    localStorage.removeItem('authToken');
+    navigate('/login');
   };
 
   return (
-    <Layout> {/* O envuelve con tu Layout principal como prefieras */}
+    <Layout>
       <div className={styles.settingsContainer}>
         <h1>Configuración de la Cuenta</h1>
 
         <div className={styles.settingsContent}>
-          {/* Navegación Lateral/Pestañas */}
           <nav className={styles.settingsNav}>
             <NavLink
               to="/settings/profile"
@@ -34,15 +32,13 @@ function SettingsLayout() {
             >
               <FaShieldAlt className={styles.navIcon} /> Seguridad
             </NavLink>
-            {/* Botón de Cerrar Sesión */}
              <button onClick={handleLogout} className={styles.logoutButton}>
                Cerrar sesión
              </button>
           </nav>
 
-          {/* Área donde se renderiza el componente hijo (Account o Password) */}
           <main className={styles.settingsPanel}>
-            <Outlet /> {/* Renderiza el componente de la ruta anidada */}
+            <Outlet />
           </main>
         </div>
       </div>
