@@ -1,0 +1,115 @@
+.controlContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    margin: 20px auto;
+    max-width: 400px;
+}
+
+.controlImage {
+    width: 200px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.controlInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.controlInfo p {
+    margin: 0;
+}
+
+.controlInfo strong {
+    font-weight: bold;
+}
+
+.switchContainer {
+    position: relative;
+    width: 90px;
+    height: 30px;
+    border-radius: 15px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.switchBackground {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.switchContainer.on .switchBackground {
+    background-color: #4CAF50;
+}
+
+.switchContainer.off .switchBackground {
+    background-color: #f44336;
+}
+
+.switchText {
+    font-size: 0.8rem;
+}
+
+.switchKnob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 26px;
+    height: 26px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.switchContainer.on .switchKnob {
+    transform: translateX(60px);
+}
+
+.switchContainer.off .switchKnob {
+    transform: translateX(0);
+}
+
+.error {
+    color: red;
+    margin-top: 10px;
+}
+
+.backToDashboardButton {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px 60px;
+    text-decoration: none;
+    color: #007bff;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+}
+
+.backToDashboardButton:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.backIcon {
+    width: 30px;
+    height: auto;
+    margin-right: 8px;
+}
