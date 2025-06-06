@@ -23,8 +23,6 @@ ChartJS.register(
   Filler
 );
 
-
-// Opciones de la gráfica (pueden ser fijas o pasarse también como prop)
 const options = {
   responsive: true,
   maintainAspectRatio: false,

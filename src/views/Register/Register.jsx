@@ -50,6 +50,7 @@ function Register() {
     };
 
     try {
+      // eslint-disable-next-line no-unused-vars
       const response = await axios.post(`${API_URL}/auth/register`, userData);
       navigate('/login');
 

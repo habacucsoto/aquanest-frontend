@@ -50,8 +50,11 @@ function HistoricalData() {
             const allSensorDataForPond = allSensorDataForPondResponse.data || [];
 
             const processedHistoricalData = {};
+            // eslint-disable-next-line no-unused-vars
             let processedTempPoints = 0;
+            // eslint-disable-next-line no-unused-vars
             let processedNitratePoints = 0;
+            // eslint-disable-next-line no-unused-vars
             let ignoredPoints = 0;
 
             allSensorDataForPond.forEach(dataPoint => {

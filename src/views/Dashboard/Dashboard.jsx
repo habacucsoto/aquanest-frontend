@@ -159,7 +159,7 @@ function Dashboard() {
         } finally {
             setAlertsLoading(false);
         }
-    }, [pondData, pondId]);
+    }, [pondData]);
 
     const subscribeToPondTopics = useCallback((client, currentPondId, sensors) => {
         if (!client || !client.connected || !currentPondId) {
@@ -291,7 +291,6 @@ function Dashboard() {
 
                  if (topicParts.length === 5 && topicParts[3] === 'data') {
                      const rawDeviceId = topicParts[2];
-                     const _dataType = topicParts[4];
                      const stringValue = message.toString();
 
                      try {
@@ -392,10 +391,6 @@ function Dashboard() {
                            console.error(`[MQTT_MSG] Error procesando error heartbeat de tópico '${topic}':`, e);
                       }
                   }
-
-                  else if (topicParts.length === 3 && topicParts[2] === 'delete') {
-                       const deletePayload = message.toString();
-                  }
                  else {
                       console.warn(`[MQTT_MSG] Mensaje recibido con formato de tópico desconocido para estanque ${pondId}: '${topic}'`);
                  }
@@ -403,8 +398,10 @@ function Dashboard() {
          }
 
         return () => {
+            console.log('[MQTT_EFFECT 1 CLEANUP] Desmontando Dashboard, cerrando conexión MQTT.');
             if (mqttClientRef.current) {
                 mqttClientRef.current.end(true, () => {
+                    console.log('[MQTT_EFFECT 1 CLEANUP] Cliente MQTT desconectado.');
                 });
                 mqttClientRef.current = null;
             }
@@ -429,6 +426,7 @@ function Dashboard() {
         }
 
         return () => {
+            console.log('[MQTT_EFFECT 2 CLEANUP] Limpieza de suscripciones...');
              if (mqttClientRef.current && pondData) {
                  console.log(`[MQTT_EFFECT 2 CLEANUP] Desuscribiendo tópicos del estanque ID ${pondId} (usando datos previos de pondData).`);
                  unsubscribeFromPondTopics(mqttClientRef.current, pondId, pondData.sensores);
@@ -438,16 +436,21 @@ function Dashboard() {
         };
     }, [pondData, pondId, subscribeToPondTopics, unsubscribeFromPondTopics]);
 
+    // Cargar la información del estanque Y las alertas históricas al montar o si pondId cambia
     useEffect(() => {
         if (pondId) {
-            fetchPondData(pondId);
+            console.log(`[POND_DATA_EFFECT] Dashboard cargado para el estanque ID: ${pondId}. Iniciando carga de pondData y notificaciones históricas.`);
+            fetchPondData(pondId); // Carga los datos del estanque, incluyendo sensores y actuadores
+            // Una vez que pondData se establece, el useEffect de abajo se ejecutará para las alertas/logs.
             setAlertsList([]);
             setLiveSensorData({});
         }
     }, [pondId, fetchPondData]);
 
+    // Nuevo useEffect que se dispara cuando pondData cambia para cargar las alertas/logs
     useEffect(() => {
         if (pondData && (pondData.sensores || pondData.actuadores)) {
+            // Llama al nuevo método combinado
             fetchAlertsAndLogsForPond();
         }
     }, [pondData, fetchAlertsAndLogsForPond]);
